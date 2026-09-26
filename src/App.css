@@ -1,0 +1,180 @@
+/* App Container & Header */
+.app-container {
+  padding: 2rem 1.5rem;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border, #e2e8f0);
+}
+
+.dashboard-header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-h, #0f172a);
+}
+
+.dashboard-header .subtitle {
+  font-size: 1rem;
+  color: var(--text, #64748b);
+  margin: 0;
+}
+
+.header-badge {
+  background: var(--accent-bg, rgba(99, 102, 241, 0.1));
+  color: var(--accent, #4f46e5);
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid var(--accent-border, rgba(99, 102, 241, 0.25));
+}
+
+/* Projects Grid */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ProjectCard Styling */
+.project-card {
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .project-card {
+    background: #1e1f29;
+    border-color: #2e303d;
+  }
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border, #f1f5f9);
+}
+
+.project-name {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-h, #0f172a);
+  margin: 0;
+  line-height: 1.35;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.badge-in-progress {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.badge-completed {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.badge-on-hold {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.badge-planning {
+  background-color: #f3e8ff;
+  color: #7e22ce;
+}
+
+.badge-cancelled {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Default Fallback Badge for unseen / unknown statuses */
+.badge-default {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px dashed #cbd5e1;
+}
+
+/* Card Body & DetailRows */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  gap: 0.5rem;
+}
+
+.detail-label {
+  color: var(--text, #64748b);
+  font-weight: 500;
+}
+
+.detail-value {
+  color: var(--text-h, #1e293b);
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Highlighted Row (Final Estimated Cost) */
+.detail-row.highlighted {
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--border, #e2e8f0);
+}
+
+.detail-row.highlighted .detail-label {
+  font-weight: 600;
+  color: var(--text-h, #0f172a);
+}
+
+.detail-row.highlighted .detail-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #059669;
+}
