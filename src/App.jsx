@@ -1,14 +1,14 @@
-import EstimationTable from './components/estimation/EstimationTable';
+import ProjectList from './components/ProjectList';
 import './App.css';
 
 /**
- * Main Application Component
- * Renders the Interactive Cost Estimation Table
+ * Main Application Component (Day 3 Assessment)
+ * Renders the Real API Projects Dashboard
  */
 function App() {
   return (
     <div className="app-container">
-      <EstimationTable />
+      <ProjectList />
     </div>
   );
 }
