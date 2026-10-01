@@ -39,7 +39,7 @@ async function request(path, { method = 'GET', body, signal, headers = {} } = {}
   };
 
   if (body) {
-    options.body = JSON.stringify(body);
+    options.body = JSON.stringify(body); //JSON.stringify -> Converts js obj into JSON string 
   }
 
   const res = await fetch(BASE + path, options);
@@ -53,7 +53,7 @@ async function request(path, { method = 'GET', body, signal, headers = {} } = {}
     return null;
   }
 
-  return res.json();
+  return res.json(); //res.json -> Converts json response into js Value
 }
 
 export const api = {

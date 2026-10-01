@@ -3,18 +3,7 @@ import ProjectCard from './ProjectCard';
 import ProjectCardSkeleton from './ProjectCardSkeleton';
 import { getProjects, getUsers } from '../utils/services/projectService';
 
-/**
- * ProjectList Component (Day 3 Challenge)
- * 
- * Rules applied from Day 3:
- * 1. Three pieces of state: projects, isLoading (starts true), error (Slide 7 & 11)
- * 2. Fetches via Service Layer - zero fetch inside component (Slide 9 & 11)
- * 3. Parallel fetching with Promise.all (Slide 12)
- * 4. Resolves ownerId via O(n) Object.fromEntries dictionary (Slide 12)
- * 5. Reuses ProjectCard from Day 1 UNCHANGED (Slide 11)
- * 6. AbortController cleanup to cancel requests on unmount (Slide 5 & 11)
- * 7. Four states handled: Loading (skeletons), Error (+ retry), Empty, and Data (Slide 8)
- */
+
 function ProjectList() {
   // State: Exactly three primary states (Slide 11)
   const [projects, setProjects] = useState([]);
@@ -52,10 +41,10 @@ function ProjectList() {
           getUsers({ signal: controller.signal }),
         ]);
 
-        if (!ignore) {
+        if (!ignore) {   //this asks has the component already cleaned up? if yes, ignore the data and do not update state
           // BUILD LOOKUP ONCE - O(n) (Slide 12)
           // Avoids O(n x m) users.find() inside map
-          const nameById = Object.fromEntries(
+          const nameById = Object.fromEntries(  //id->name
             usersData.map((user) => [user.id, user.name])
           );
 
@@ -65,7 +54,7 @@ function ProjectList() {
             owner: nameById[project.ownerId] || 'Unassigned',
           }));
 
-          setProjects(resolvedProjects);
+          setProjects(resolvedProjects); // saved final projects to state
         }
       } catch (err) {
         // Do not update state if aborted on unmount
@@ -88,7 +77,7 @@ function ProjectList() {
     };
   }, [reloadToken, simulateError, simulateEmpty]);
 
-  // Working "Try again" action (Slide 8 & 11)
+  // Working "Try again button" action (Slide 8 & 11)
   function handleRetry() {
     setSimulateError(false); // Reset any error simulation
     setReloadToken((prev) => prev + 1);
