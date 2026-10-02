@@ -1,15 +1,16 @@
-import ProjectList from './components/ProjectList';
+import { AuthProvider } from './context/AuthContext';
+import AppRoutes from './routes/AppRoutes';
 import './App.css';
 
 /**
- * Main Application Component (Day 3 Assessment)
- * Renders the Real API Projects Dashboard
+ * Main Application Component (Day 4)
+ * Provides authentication context to AppRoutes.
  */
 function App() {
   return (
-    <div className="app-container">
-      <ProjectList />
-    </div>
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
   );
 }
 

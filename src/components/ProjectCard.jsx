@@ -1,11 +1,16 @@
+import { Link } from 'react-router-dom';
 import StatusBadge from './StatusBadge';
 import DetailRow from './DetailRow';
 import { formatCost, formatDateRange } from '../utils/formatters';
+import { PATHS } from '../routes/paths';
 
 /**
- * ProjectCard Component (Functional Component)
+ * ProjectCard Component
  * Takes a single `project` prop and renders all required project details:
  * Name, Client, StatusBadge, Owner, Date Range, Total Hours, and Final Cost.
+ * 
+ * Features Card Navigation (Slide 6 & Day 4 Challenge):
+ * Clicking title or action link navigates directly to /projects/:projectId/estimate.
  */
 function ProjectCard({ project }) {
   if (!project) {
@@ -13,6 +18,7 @@ function ProjectCard({ project }) {
   }
 
   const {
+    id,
     name,
     client,
     status,
@@ -30,9 +36,13 @@ function ProjectCard({ project }) {
 
   return (
     <div className="project-card">
-      {/* Card Header: Project Name & Reusable Status Badge */}
+      {/* Card Header: Project Name (as Link) & Reusable Status Badge */}
       <div className="card-header">
-        <h3 className="project-name" title={name}>{name}</h3>
+        <h3 className="project-name" title={name}>
+          <Link to={PATHS.projectEstimate(id)} className="project-name-link">
+            {name}
+          </Link>
+        </h3>
         <StatusBadge status={status} />
       </div>
 
@@ -47,6 +57,13 @@ function ProjectCard({ project }) {
           value={formattedCost}
           isHighlighted={true}
         />
+      </div>
+
+      {/* Card Footer: Navigation Link to Project Details & Estimate */}
+      <div className="card-footer">
+        <Link to={PATHS.projectEstimate(id)} className="btn-card-nav">
+          View Estimate & Details →
+        </Link>
       </div>
     </div>
   );

@@ -3,8 +3,8 @@ import babel from '@rolldown/plugin-babel'
 import { defineConfig } from 'vite'
 
 /**
- * Mock Backend Data for Day 3 Assessment:
- * Projects have ownerId (e.g. "u1", "u2") which must be resolved via GET /users.
+ * Mock Backend Data for Day 3 & Day 4:
+ * Projects have ownerId which resolves via GET /users.
  */
 const mockUsers = [
   { id: 'u1', name: 'Anita Rao', role: 'Engineering Lead' },
@@ -14,7 +14,7 @@ const mockUsers = [
   { id: 'u5', name: 'Vikram Malhotra', role: 'QA Lead' },
 ];
 
-const mockProjects = [
+let mockProjects = [
   {
     id: 'proj-101',
     name: 'Enterprise Cloud Migration',
@@ -25,6 +25,7 @@ const mockProjects = [
     endDate: '2026-12-15',
     totalHours: 320,
     finalCost: 530332,
+    description: 'Migrating on-premise infrastructure to AWS with hybrid-cloud security and auto-scaling.',
   },
   {
     id: 'proj-102',
@@ -36,6 +37,7 @@ const mockProjects = [
     endDate: '2026-08-30',
     totalHours: 180,
     finalCost: 285400,
+    description: 'Generative AI bot supporting multi-lingual customer inquiries and ticket escalations.',
   },
   {
     id: 'proj-103',
@@ -47,6 +49,7 @@ const mockProjects = [
     endDate: '2027-01-20',
     totalHours: 95,
     finalCost: 0, // Shows "Not estimated"
+    description: 'Real-time GPS fleet tracking and telematics dashboard for supply chain logistics.',
   },
   {
     id: 'proj-104',
@@ -58,17 +61,19 @@ const mockProjects = [
     endDate: '2027-04-30',
     totalHours: 450,
     finalCost: null, // Shows "Not estimated"
+    description: 'HIPAA-compliant telemedicine platform with video consultations and prescription sync.',
   },
   {
     id: 'proj-105',
     name: 'Smart Contract Audit Tool',
     client: 'BlockSecure Labs',
-    status: 'Review Pending', // Unseen status -> tests fallback badge
+    status: 'Review Pending',
     ownerId: 'u5', // Resolves to Vikram Malhotra
     startDate: '2026-09-15',
     endDate: '2026-11-30',
     totalHours: 140,
     finalCost: undefined, // Shows "Not estimated"
+    description: 'Automated vulnerability scanner for EVM-compatible smart contracts.',
   },
   {
     id: 'proj-106',
@@ -80,13 +85,17 @@ const mockProjects = [
     endDate: '2026-10-25',
     totalHours: 260,
     finalCost: 1482950,
+    description: 'Optimizing checkout funnel with one-click payments, UPI, and instant fraud checks.',
   },
 ];
 
 /**
  * Vite Plugin: Mock API Server
- * Responds to GET /projects and GET /users with simulated network latency (600ms)
- * Allows checking the DevTools Network waterfall, skeletons, and error testing.
+ * Handles:
+ * - GET /projects (all projects)
+ * - POST /projects (create new project)
+ * - GET /projects/:projectId (single project by ID or 404)
+ * - GET /users (team users)
  */
 function mockApiPlugin() {
   return {
@@ -95,8 +104,40 @@ function mockApiPlugin() {
       server.middlewares.use((req, res, next) => {
         const url = new URL(req.url, 'http://localhost');
 
+        // GET or POST /projects
         if (url.pathname === '/projects') {
-          // Check for simulated error parameter
+          if (req.method === 'POST') {
+            let body = '';
+            req.on('data', chunk => { body += chunk; });
+            req.on('end', () => {
+              try {
+                const data = JSON.parse(body || '{}');
+                const newProject = {
+                  id: `proj-${Date.now().toString().slice(-4)}`,
+                  name: data.name || 'Untitled Project',
+                  client: data.client || 'Internal',
+                  status: data.status || 'Planning',
+                  ownerId: data.ownerId || 'u1',
+                  startDate: data.startDate || new Date().toISOString().split('T')[0],
+                  endDate: data.endDate || new Date(Date.now() + 90*86400000).toISOString().split('T')[0],
+                  totalHours: Number(data.totalHours) || 0,
+                  finalCost: Number(data.finalCost) || 0,
+                  description: data.description || 'New project initiated.',
+                };
+                mockProjects.unshift(newProject);
+                res.statusCode = 201;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify(newProject));
+              } catch {
+                res.statusCode = 400;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ message: 'Invalid JSON payload' }));
+              }
+            });
+            return;
+          }
+
+          // GET /projects
           const simulateError = url.searchParams.get('error') === 'true';
           const empty = url.searchParams.get('empty') === 'true';
 
@@ -111,16 +152,38 @@ function mockApiPlugin() {
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify(empty ? [] : mockProjects));
-          }, 600); // 600ms delay to clearly show skeleton loading
+          }, 300);
           return;
         }
 
+        // GET /projects/:projectId
+        const projectMatch = url.pathname.match(/^\/projects\/([^/]+)$/);
+        if (projectMatch && req.method === 'GET') {
+          const id = decodeURIComponent(projectMatch[1]);
+          const found = mockProjects.find(p => p.id === id);
+
+          setTimeout(() => {
+            if (!found) {
+              res.statusCode = 404;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ message: 'Project not found' }));
+              return;
+            }
+
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(found));
+          }, 300);
+          return;
+        }
+
+        // GET /users
         if (url.pathname === '/users') {
           setTimeout(() => {
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify(mockUsers));
-          }, 600);
+          }, 300);
           return;
         }
 

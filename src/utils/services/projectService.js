@@ -7,11 +7,24 @@ import { api } from './apiClient';
 
 /**
  * Fetches all projects from GET /projects
- * Accepts options (such as signal for AbortController and custom query path).
  */
 export const getProjects = (options = {}) => {
   const endpoint = options.path || '/projects';
   return api.get(endpoint, options);
+};
+
+/**
+ * Fetches a single project by ID from GET /projects/:projectId
+ */
+export const getProject = (id, options = {}) => {
+  return api.get(`/projects/${id}`, options);
+};
+
+/**
+ * Creates a new project via POST /projects
+ */
+export const createProject = (projectData, options = {}) => {
+  return api.post('/projects', projectData, options);
 };
 
 /**
